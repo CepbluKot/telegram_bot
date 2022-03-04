@@ -44,3 +44,9 @@ CREATE TABLE connect_tb
     teach_role varchar(8)
 );
 
+drop table connect_tb;
+drop table teach_tb;
+drop table lesson_tb;
+drop table student_tb;
+drop table group_tb;
+drop table global_tb;

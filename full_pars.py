@@ -46,9 +46,6 @@ def parse_prepod(url):
                 full_lessons_list.append(curr_week)
     return full_lessons_list
 
-
 #print(parse_prepod('https://mai.ru/education/studies/schedule/ppc.php?guid=d72d63e7-1d99-11e0-9baf-1c6f65450efa#'))
-# print(parse_group('М3О-221Б-20'))
-# print(parse_group_today('М3О-221Б-20'))
-#for data in prep_text_pars.get_prepod_page('https://mai.ru/education/studies/schedule/ppc.php?guid=d0c04806-1d99-11e0-9baf-1c6f65450efa#'):
-#    print(data['group'])
+#print(parse_group('М3О-221Б-20'))
+#print(parse_group_today('М3О-221Б-20'))

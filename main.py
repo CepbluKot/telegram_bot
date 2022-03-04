@@ -7,20 +7,18 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+
 from aiogram.dispatcher.filters import Text
 
 import prep_text_pars
 import sys
-sys.path.append('/home/gilfoyle/Documents/coding/telegram_bot/db_setting')
+sys.path.append('C:\\Users\\ИЛЮХА-БОСС\\Desktop\\Прога\\Python\\telegram_bot\\db_setting')
 
 import tg_connect_db as tg_db
+from us_init import find_teleg_group
 from db_connect import DataConnect
 from us_init import find_teleg_group
 
-# import sys
-# sys.path.append('/home/gilfoyle/Documents/coding/telegram_bot/db_setting')
-# import tg_connect_db as tg_db
-# from db_connect import DataConnect
 
 API_TOKEN = '5110094448:AAGG_IiPPyjvwtROrBqGu0C74EMSjew3NDQ'
 bot = Bot(token=API_TOKEN)
@@ -28,7 +26,7 @@ dp = Dispatcher(bot, storage=MemoryStorage(), loop=get_event_loop())
 polls_dispcatcher = []
 
 
-# db = DataConnect()
+db = DataConnect()
 all_groups = []
 for data in prep_text_pars.get_prepod_page('https://mai.ru/education/studies/schedule/ppc.php?guid=d0c04806-1d99-11e0-9baf-1c6f65450efa#'):
     all_groups.append(data['group'])
@@ -120,8 +118,7 @@ async def fio_choosen(message: types.Message, state: FSMContext):
         await message.reply('Выберите группу', reply_markup=marakap)
 
     else:
-
-# ############### БРАТЬ ДАННЫЕ О РЕГИСТРАЦИИ ПРЕПОДА ТУТ ##########
+        tg_db.reg_us(user_data['chosen_fio'], message.from_user.id, user_data['chosen_role'])
 
         await message.reply('вы ' + user_data['chosen_fio'] + ' ' + user_data['chosen_role'])
       
@@ -138,7 +135,7 @@ async def choose_group(message: types.Message, state: FSMContext):
 
         await state.update_data(chosen_group=group)
         user_data = await state.get_data()
-# ############### БРАТЬ ДАННЫЕ О РЕГИСТРАЦИИ СТУДЕНТА ТУТ ##########
+        tg_db.reg_us(user_data['chosen_fio'], message.from_user.id, user_data['chosen_role'], group_stud = user_data['chosen_group'])
 
         await message.answer(f"{user_data['chosen_role']} {user_data['chosen_group']} {user_data['chosen_fio']}.\n", reply_markup=types.ReplyKeyboardRemove())
 
@@ -234,8 +231,7 @@ async def fio_choosen(message: types.Message, state: FSMContext):
     group = message.text.lower()
 
     users_id_list = []
-
-# ############### ЗДЕСЬ ДОБАВИТЬ FOR ЧТОБЫ ЗАПОЛНИТЬ СПИСОК USER_ID_LIST АЙДИШНИКАМИ ЮЗЕРОВ СООТВЕТСТВУЮЩЕЙ ГРУППЫ ##########
+    users_id_list = find_teleg_group(group)
 
 
 # ############### # ############### # ############### # ############### 

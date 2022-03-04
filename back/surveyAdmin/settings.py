@@ -78,9 +78,9 @@ WSGI_APPLICATION = 'surveyAdmin.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'surv_db',
-        'USER': 'dmitri101',
-        'PASSWORD': 'dbpass',
+        'NAME': 'global_con_db',
+        'USER': 'postgres',
+        'PASSWORD': 'admin',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
