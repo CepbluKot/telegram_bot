@@ -1,4 +1,4 @@
-from run_to_create_tables import registerData, mem_for_created_forms, send_forms_mem, engine
+from fake_db.run_to_create_tables import registerData, mem_for_created_forms, send_forms_mem, engine
 from sqlalchemy import update, select
 import psycopg2
 
@@ -19,7 +19,7 @@ def db_registerData_add_user(user_id: int, chosen_fio: str, chosen_group: str, c
         chosen_fio = chosen_fio, 
         chosen_group = chosen_group, 
         chosen_role = chosen_role, 
-        user_id = user_id,
+        telegram_id = str(user_id),
         confirmed = False
     )
 
@@ -62,7 +62,10 @@ def db_mem_for_created_forms_insert_question(form_id: int, inser_after_id: int, 
     )
     
     mem_for_created_forms_copy = engine.execute(query).fetchall()[0][1]
-    mem_for_created_forms_copy.insert(inser_after_id + 1, data)
+
+    
+
+    mem_for_created_forms_copy.insert(inser_after_id + 1, data[0])
     query = update(mem_for_created_forms).where(
         mem_for_created_forms.c.form_id == form_id
     ).values(

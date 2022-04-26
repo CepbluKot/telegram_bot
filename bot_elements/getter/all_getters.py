@@ -300,7 +300,7 @@ def send_forms_mem_get_form_completed_users(sent_form_id: int):
     {'form_creator_user_id': id,'send_to_users_ids': [айдишники], 'got_answers_from': [айдишники]}
     """
     # return send_forms_mem[sent_form_id]['info']['got_answers_from']
-    return db_send_forms_mem_get_form_completed_users(sent_form_id=)
+    return db_send_forms_mem_get_form_completed_users(sent_form_id)
 
 
 def unique_form_id_get():

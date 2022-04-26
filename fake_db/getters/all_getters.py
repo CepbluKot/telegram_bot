@@ -1,5 +1,5 @@
 from django.dispatch import receiver
-from run_to_create_tables import registerData, mem_for_created_forms, send_forms_mem, engine
+from fake_db.run_to_create_tables import registerData, mem_for_created_forms, send_forms_mem, engine
 from sqlalchemy import update, select
 import psycopg2
 
@@ -84,7 +84,7 @@ def db_mem_for_created_forms_get_creator_id(form_id: int):
 
     if len(data) == 1:
             data = [data]
-    
+    print('\n\n data ', recieved)
     return data[-1]['creator_id']
 
 
@@ -180,7 +180,7 @@ def db_registerData_check_is_registered(user_id: int):
         registerData.c.telegram_id == str(user_id)
     )
     recieved = engine.execute(query).fetchall()
-
+    print('register ', recieved)
     if bool(recieved):
         return recieved[0][-1]
     
@@ -203,9 +203,6 @@ def db_registerData_check_is_confirmed(user_id: int):
 
     if bool(recieved):
         return recieved[0][-1]
-    
-    return False
-
 
 
 def db_send_forms_mem_get():

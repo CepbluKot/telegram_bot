@@ -1,4 +1,4 @@
-from run_to_create_tables import registerData, mem_for_created_forms, send_forms_mem, engine
+from fake_db.run_to_create_tables import registerData, mem_for_created_forms, send_forms_mem, engine
 from sqlalchemy import update, select, delete
 import psycopg2
 

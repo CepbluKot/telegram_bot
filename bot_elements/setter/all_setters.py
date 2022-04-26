@@ -241,8 +241,8 @@ async def registerData_add_user(user_id: int, chosen_fio: str, chosen_group: str
 
     unconfirmed_users_plus_one()
 
-    # for reciever in adminIds:
-    #     await admin_bot.send_message(text='у вас ' + str(unconfirmed_users_get()) + ' неподтвержденных пользователей', chat_id=reciever)
+    for reciever in adminIds:
+        await admin_bot.send_message(text='у вас ' + str(unconfirmed_users_get()) + ' неподтвержденных пользователей', chat_id=reciever)
 
     # registerData[user_id] = {'chosen_fio': chosen_fio, 'chosen_group': chosen_group, 'chosen_role': chosen_role, 'confirmed': False}
     db_registerData_add_user(user_id, chosen_fio, chosen_group, chosen_role)

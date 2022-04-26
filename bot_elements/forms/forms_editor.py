@@ -128,6 +128,9 @@ async def get_options(message: types.Message, state: FSMContext): # form.waiting
 
     temp_mem_for_form_creator_remove_form(user_id=message.chat.id)
     
+
+    print('\n\n oamgad ', data , '\n\n')
+
     await display_form(form_id=data['form_id'], message=message)
     await state.finish()
 
