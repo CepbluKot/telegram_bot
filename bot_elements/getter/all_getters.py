@@ -11,6 +11,7 @@ from bot_elements.storages.all_storages import temp_chosen_groups_data
 from bot_elements.storages.all_storages import temp_form_index_data
 
 import bot_elements.storages.all_storages
+from fake_db.getters.all_getters import db_get_group_users_ids, db_mem_for_created_forms_get, db_mem_for_created_forms_get_creator_id, db_mem_for_created_forms_get_data, db_mem_for_created_forms_get_form_name, db_registerData_check_is_confirmed, db_registerData_check_is_in_register_list, db_registerData_check_is_registered, db_registerData_get, db_registerData_get_fio, db_registerData_get_group, db_registerData_get_role, db_send_forms_mem_get, db_send_forms_mem_get_form, db_send_forms_mem_get_form_completed_users, db_send_forms_mem_get_form_sent_users, db_unique_form_id_get, db_unique_sent_form_id_get
 
 
 def temp_form_recipient_data_get_data(user_id: int):
@@ -49,7 +50,8 @@ def mem_for_created_forms_get():
         Пример mem_for_created_forms:
     {0: [{'question': 'Сос', 'options': ['Лан', ' все'], 'message_id': 0, 'type': 'poll'}, {'question': 'Месяц', 'message_id': 0, 'type': 'msg'}, {'form_name': 'Формо', 'type': 'info', 'form_id': 0, 'creator_id': 506629389}], 1: [{'question': 'Зе криэтир', 'options': ['Один', ' два'], 'message_id': 0, 'type': 'poll'}, {'form_name': 'Тайлер', 'type': 'info', 'form_id': 1, 'creator_id': 506629389}]}
     """
-    return mem_for_created_forms
+    # return mem_for_created_forms
+    return db_mem_for_created_forms_get()
 
 
 def mem_for_created_forms_get_data(form_id: int):
@@ -59,7 +61,8 @@ def mem_for_created_forms_get_data(form_id: int):
         Пример mem_for_created_forms[form_id]:
     [{'question': 'Сос', 'options': ['Лан', ' все'], 'message_id': 0, 'type': 'poll'}, {'question': 'Месяц', 'message_id': 0, 'type': 'msg'}, {'form_name': 'Формо', 'type': 'info', 'form_id': 0, 'creator_id': 506629389}]
     """
-    return mem_for_created_forms[form_id]
+    # return mem_for_created_forms[form_id]
+    return db_mem_for_created_forms_get_data(form_id)
 
 
 def mem_for_created_forms_get_form_name(form_id: int):
@@ -69,7 +72,8 @@ def mem_for_created_forms_get_form_name(form_id: int):
         Пример mem_for_created_forms[form_id][-1]:
     {'form_name': 'Формо', 'type': 'info', 'form_id': 0, 'creator_id': 506629389}
     """
-    return mem_for_created_forms[form_id][-1]['form_name']
+    # return mem_for_created_forms[form_id][-1]['form_name']
+    return db_mem_for_created_forms_get_form_name(form_id)
 
 
 def mem_for_created_forms_get_creator_id(form_id: int):
@@ -79,7 +83,8 @@ def mem_for_created_forms_get_creator_id(form_id: int):
         Пример mem_for_created_forms[form_id][-1]:
     {'form_name': 'Формо', 'type': 'info', 'form_id': 0, 'creator_id': 506629389}
     """
-    return mem_for_created_forms[form_id][-1]['creator_id']
+    # return mem_for_created_forms[form_id][-1]['creator_id']
+    return db_mem_for_created_forms_get_creator_id(form_id)
 
 
 def completing_forms_dispatcher_get_form_copy(user_id: int):
@@ -133,7 +138,8 @@ def registerData_get():
         Пример registerData:
     {user_id: {'chosen_fio': chosen_fio, 'chosen_group': chosen_group, 'chosen_role': chosen_role, 'confirmed': True/False}, ...}
     """
-    return registerData
+    # return registerData
+    return db_registerData_get()
 
 
 def registerData_get_fio(user_id: int):
@@ -142,7 +148,8 @@ def registerData_get_fio(user_id: int):
         Пример registerData[user_id]:
     {'chosen_fio': chosen_fio, 'chosen_group': chosen_group, 'chosen_role': chosen_role, 'confirmed': True/False}
     """
-    return registerData[user_id]['chosen_fio']
+    # return registerData[user_id]['chosen_fio']
+    return db_registerData_get_fio(user_id)
 
 
 def registerData_get_group(user_id: int):
@@ -152,7 +159,8 @@ def registerData_get_group(user_id: int):
     {'chosen_fio': chosen_fio, 'chosen_group': chosen_group, 'chosen_role': chosen_role, 'confirmed': True/False}
     """
     
-    return registerData[user_id]['chosen_group']
+    # return registerData[user_id]['chosen_group']
+    return db_registerData_get_group(user_id)
 
 
 def registerData_get_role(user_id: int):
@@ -162,14 +170,16 @@ def registerData_get_role(user_id: int):
     {'chosen_fio': chosen_fio, 'chosen_group': chosen_group, 'chosen_role': chosen_role, 'confirmed': True/False}
     """
 
-    return registerData[user_id]['chosen_role']
+    # return registerData[user_id]['chosen_role']
+    return db_registerData_get_role(user_id)
 
 
 def registerData_check_is_in_register_list(user_id: int):
     """ (Для БД) Проверяет есть ли юзер в registerData"""
 
     """ user_id - айди юзера (эта функция по факту повторяется, но она нужна)"""
-    return user_id in registerData.keys()
+    # return user_id in registerData.keys()
+    return db_registerData_check_is_in_register_list(user_id)
 
 
 def registerData_check_is_registered(user_id: int):
@@ -178,11 +188,12 @@ def registerData_check_is_registered(user_id: int):
         Формат registerData:
         {user_id: {'chosen_fio': chosen_fio, 'chosen_group': chosen_group, 'chosen_role': chosen_role, 'confirmed': False}, ...}
     """
-    if user_id in registerData.keys():
-        print(registerData[user_id]['confirmed'])
-        return registerData[user_id]['confirmed']
-    else:
-        return False
+    # if user_id in registerData.keys():
+    #     print(registerData[user_id]['confirmed'])
+    #     return registerData[user_id]['confirmed']
+    # else:
+    #     return False
+    return db_registerData_check_is_registered(user_id)
 
 
 def registerData_check_is_confirmed(user_id: int):
@@ -193,10 +204,12 @@ def registerData_check_is_confirmed(user_id: int):
         Пример registerData[user_id]:
     {'chosen_fio': chosen_fio, 'chosen_group': chosen_group, 'chosen_role': chosen_role, 'confirmed': True/False}
     """
+    return db_registerData_check_is_confirmed(user_id)
 
-    if user_id in registerData.keys():
 
-        return registerData[user_id]['confirmed']
+    # if user_id in registerData.keys():
+
+    #     return registerData[user_id]['confirmed']
 
 
 def registerData_check_is_editing(user_id: int):
@@ -247,7 +260,8 @@ def send_forms_mem_get():
     {'sent_form_id': {'form_id': *form_id*, 'info': {'form_creator_user_id': id,'send_to_users_ids': [ids], 'got_answers_from': [ids]}, ...} 
     
     """
-    return send_forms_mem
+    # return send_forms_mem
+    return db_send_forms_mem_get()
 
 
 def send_forms_mem_get_form(sent_form_id: int):
@@ -259,7 +273,8 @@ def send_forms_mem_get_form(sent_form_id: int):
     Формат send_forms_mem[sent_form_id]
     {'form_id': *form_id*, 'info': {'form_creator_user_id': id,'send_to_users_ids': [айдишники], 'got_answers_from': [айдишники]}}
     """
-    return send_forms_mem[sent_form_id]
+    # return send_forms_mem[sent_form_id]
+    return db_send_forms_mem_get_form(sent_form_id)
 
 
 def send_forms_mem_get_form_sent_users(sent_form_id: int):
@@ -271,7 +286,8 @@ def send_forms_mem_get_form_sent_users(sent_form_id: int):
     Формат send_forms_mem[sent_form_id]['info']
     {'form_creator_user_id': id,'send_to_users_ids': [айдишники], 'got_answers_from': [айдишники]}
     """
-    return send_forms_mem[sent_form_id]['info']['send_to_users_ids']
+    # return send_forms_mem[sent_form_id]['info']['send_to_users_ids']
+    return db_send_forms_mem_get_form_sent_users(sent_form_id)
 
 
 def send_forms_mem_get_form_completed_users(sent_form_id: int):
@@ -283,19 +299,22 @@ def send_forms_mem_get_form_completed_users(sent_form_id: int):
     Формат send_forms_mem[sent_form_id]['info']
     {'form_creator_user_id': id,'send_to_users_ids': [айдишники], 'got_answers_from': [айдишники]}
     """
-    return send_forms_mem[sent_form_id]['info']['got_answers_from']
+    # return send_forms_mem[sent_form_id]['info']['got_answers_from']
+    return db_send_forms_mem_get_form_completed_users(sent_form_id=)
 
 
 def unique_form_id_get():
     """ (Для БД) Возвращает счетчик созданных форм"""
     # print(' \n\nloool unique_form_id ', bot_elements.storages.all_storages.unique_form_id)
-    return bot_elements.storages.all_storages.unique_form_id
+    # return bot_elements.storages.all_storages.unique_form_id
+    return db_unique_form_id_get()
 
 
 def unique_sent_form_id_get():
     """ (Для БД) Возвращает счетчик отправленных форм"""
     # print('unique_sent_form_id ',bot_elements.storages.all_storages.unique_sent_form_id)
-    return bot_elements.storages.all_storages.unique_sent_form_id
+    # return bot_elements.storages.all_storages.unique_sent_form_id
+    return db_unique_sent_form_id_get()
 
 
 def unconfirmed_users_get():
@@ -326,7 +345,7 @@ def get_group_users_ids(groups: list):
     """ (Для БД) Возвращает список айдишников студентов из выбранных групп"""
     """ groups - список с группами"""
 
-    pass
+    return db_get_group_users_ids(groups)
 
 
 def get_document(form_id: int, sent_form_id: int): # Илья сюда
@@ -340,7 +359,7 @@ def get_document(form_id: int, sent_form_id: int): # Илья сюда
 def get_choosing_groups_dispatcher_user(user_id: int):
     """
         Формат:
-            {user_id: {0: {'poll_id': , 'poll_options': }, 1: {...}, ...}   
+            {user_id: {poll_number: {'poll_id': , 'poll_options': }, 1: {...}, ...}   
     """
     if user_id in choosing_groups_dispatcher.keys():
         return choosing_groups_dispatcher[user_id]

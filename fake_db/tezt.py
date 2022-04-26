@@ -1,0 +1,16 @@
+import json
+from getters.all_getters import db_unique_form_id_get
+from getters.all_getters import db_send_forms_mem_get_form
+from getters.all_getters import db_send_forms_mem_get
+from getters.all_getters import db_registerData_check_is_in_register_list
+from getters.all_getters import db_registerData_get_fio
+from getters.all_getters import db_registerData_get
+from getters.all_getters import db_mem_for_created_forms_get_data
+from getters.all_getters import db_mem_for_created_forms_get
+
+from run_to_create_tables import registerData, mem_for_created_forms, engine, send_forms_mem
+from sqlalchemy import update, select
+import psycopg2
+
+
+db_unique_form_id_get()

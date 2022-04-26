@@ -8,6 +8,7 @@ from bot_elements.storages.all_storages import edited_register_data
 from bot_elements.storages.all_storages import choosing_groups_dispatcher
 from bot_elements.storages.all_storages import temp_chosen_groups_data
 from bot_elements.storages.all_storages import temp_form_index_data
+from fake_db.removers.all_removers import db_mem_for_created_forms_delete_form, db_mem_for_created_forms_delete_question, db_registerData_remove_user
 # temp_mem_for_form_creator + temp_poll_recip_data -> mem_for_created_forms -> send_forms_mem -> completing_forms_dispatcher
 
 
@@ -37,14 +38,16 @@ def mem_for_created_forms_delete_question(form_id: int, question_id: int):
         {*form_id*: [form data], ...}
     """
     
-    if form_id in mem_for_created_forms.keys():
-        mem_for_created_forms[form_id].pop(question_id)
+    # if form_id in mem_for_created_forms.keys():
+    #     mem_for_created_forms[form_id].pop(question_id)
+    db_mem_for_created_forms_delete_question(form_id, question_id)
 
 
 def mem_for_created_forms_delete_form(form_id: int):
     """ (Для БД) Убирает 1 форму из mem_for_created_forms"""
     """ form_id - айди формы"""
-    mem_for_created_forms.pop(form_id, None)
+    # mem_for_created_forms.pop(form_id, None)
+    db_mem_for_created_forms_delete_form(form_id)
 
 
 def completing_forms_dispatcher_remove_session(user_id: int):
@@ -55,7 +58,8 @@ def completing_forms_dispatcher_remove_session(user_id: int):
 def registerData_remove_user(user_id: int):
     """ (Для БД) Убирает запись о регистрации пользователя из registerData"""
     """ user_id - айди пользователя"""
-    registerData.pop(user_id, None)
+    # registerData.pop(user_id, None)
+    db_registerData_remove_user(user_id)
 #  --- дальше забей ---
 
 def edited_register_data_remove_user(user_id: int):
