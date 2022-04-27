@@ -16,6 +16,7 @@ from bots import admin_bot, adminIds, student_bot, prepod_bot
 
 from bot_elements.getter.all_getters import unconfirmed_users_get, registerData_get_role, registerData_check_is_in_register_list, registerData_get_group, registerData_get_fio, registerData_get_role, registerData_check_is_editing, edited_register_data_get_user, unconfirmed_users_get, unconfirmed_edit_users_get, registerData_check_is_confirmed
 from bot_elements.remover.all_removers import edited_register_data_remove_user, registerData_remove_user
+from fake_db.getters.all_getters import db_mem_for_created_forms_get_data
 from fake_db.setters.all_setters import db_confirm_user, db_mem_for_created_forms_add_element, db_mem_for_created_forms_edit_poll_options, db_mem_for_created_forms_insert_question, db_mem_for_created_forms_set_new_form_name, db_mem_for_created_forms_set_new_question_name, db_registerData_add_user, db_registerData_change_data, db_send_forms_mem_add_completed_user, db_send_forms_mem_add_sent_form
 
 def unconfirmed_users_plus_one():
@@ -183,7 +184,7 @@ def send_forms_mem_add_sent_form(sent_form_id: int, form_id: int, form_creator_u
     db_send_forms_mem_add_sent_form(sent_form_id, form_id, form_creator_user_id, send_to_users_ids, groups)
 
 
-def send_forms_mem_add_completed_user(sent_form_id: int, user_id: int):
+async def send_forms_mem_add_completed_user(sent_form_id: int, user_id: int):
     """ (Для БД) Добавляет пользователя в список пользователей прошедших форму"""
     """
         sent_form_id - айдишник отправленной формы, , user_id - айди телеги пользователя, который прошел опрос
@@ -193,14 +194,14 @@ def send_forms_mem_add_completed_user(sent_form_id: int, user_id: int):
     {'form_creator_user_id': id,'send_to_users_ids': [айдишники], 'send_to_groups': [groups],'got_answers_from': [айдишники]}
     """
     # send_forms_mem[sent_form_id]['info']['got_answers_from'].append(user_id)
-    db_send_forms_mem_add_completed_user(sent_form_id, user_id)
+    await db_send_forms_mem_add_completed_user(sent_form_id, user_id)
 
 
 def completing_forms_dispatcher_add_session(chat_id: int, unique_form_id: int, unique_sent_form_id: int):
     """ Добавляет 1 сессию в список активных сессий"""
     
     completing_forms_dispatcher[chat_id] = {
-        'chat_id': chat_id, 'unique_form_id': unique_form_id, 'unique_sent_form_id': unique_sent_form_id, 'current_question_num': 0,'form_copy': mem_for_created_forms[unique_form_id]}
+        'chat_id': chat_id, 'unique_form_id': unique_form_id, 'unique_sent_form_id': unique_sent_form_id, 'current_question_num': 0,'form_copy': db_mem_for_created_forms_get_data(unique_form_id)}
     
 
 def completing_forms_dispatcher_add_1_to_question_num(user_id: int):

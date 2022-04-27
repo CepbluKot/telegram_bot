@@ -34,7 +34,7 @@ def db_mem_for_created_forms_delete_form(form_id: int):
     """ (Для БД) Убирает 1 форму из mem_for_created_forms"""
     """ form_id - айди формы"""
     
-    query = delete([mem_for_created_forms]).where(
+    query = delete(mem_for_created_forms).where(
         mem_for_created_forms.c.form_id == form_id
     )
     engine.execute(query)

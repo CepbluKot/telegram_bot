@@ -60,12 +60,15 @@ def db_mem_for_created_forms_get_form_name(form_id: int):
         mem_for_created_forms.c.form_id == form_id
     )
     recieved = engine.execute(query).fetchall()
-    data = recieved[0][1]
 
-    if len(data) == 1:
-            data = [data]
-    
-    return data[-1]['form_name']
+    if recieved:
+        data = recieved[0][1]
+
+        if len(data) == 1:
+                data = [data]
+        
+        return data[-1]['form_name']
+    return []
 
 
 def db_mem_for_created_forms_get_creator_id(form_id: int):
@@ -80,11 +83,14 @@ def db_mem_for_created_forms_get_creator_id(form_id: int):
         mem_for_created_forms.c.form_id == form_id
     )
     recieved = engine.execute(query).fetchall()
+    
+    if not recieved:
+        return []
+    
     data = recieved[0][1]
-
     if len(data) == 1:
             data = [data]
-    print('\n\n data ', recieved)
+
     return data[-1]['creator_id']
 
 
@@ -289,7 +295,11 @@ def db_unique_form_id_get():
     # print(' \n\nloool unique_form_id ', bot_elements.storages.all_storages.unique_form_id)
     query = select([send_forms_mem])
     recieved = engine.execute(query).fetchall()
-    return (recieved[-1][1]['form_id'])
+    
+    if not recieved:
+        return 0
+    
+    return (int(recieved[-1][1]['form_id']) + 1)
 
 
 def db_unique_sent_form_id_get():
@@ -298,7 +308,10 @@ def db_unique_sent_form_id_get():
     # return bot_elements.storages.all_storages.unique_sent_form_id
     query = select([send_forms_mem])
     recieved = engine.execute(query).fetchall()
-    return (recieved[-1][0])
+    
+    if not recieved:
+        return 0
+    return (int(recieved[-1][0]) + 1)
 
 
 def db_get_all_groups():

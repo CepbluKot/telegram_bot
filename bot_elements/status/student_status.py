@@ -6,6 +6,8 @@ from bot_elements.setter.all_setters import completing_forms_dispatcher_add_sess
 from bots import student_bot
 import collections
 
+from fake_db.getters.all_getters import db_send_forms_mem_get_form_completed_users
+
 async def display_user_status(message: types.Message):
 
     full_message = "Полученные формы:"
@@ -13,11 +15,12 @@ async def display_user_status(message: types.Message):
     for form_id in send_forms_mem_get():
         form = send_forms_mem_get()
         select_form = form[form_id]
-        if message.chat.id in select_form['info']['send_to_users_ids'] and not message.chat.id in select_form['info']['got_answers_from']:
+        # print('\n\n hate niggers ',str(message.chat.id),  select_form['info']['send_to_users_ids'] , (message.chat.id) in select_form['info']['got_answers_from'],  (message.chat.id) in select_form['info']['send_to_users_ids'] )
+        if (message.chat.id) in select_form['info']['send_to_users_ids'] and not str(message.chat.id) in select_form['info']['got_answers_from']:
             
-            full_message += '\n' + str(mem_for_created_forms_get_form_name(select_form['form_id'])) + ' от пользователя ' + str(mem_for_created_forms_get_creator_id(select_form['form_id'])) + ' /complete_' + str(select_form['form_id']) + '_' + str(selected_form)
+            full_message += '\n' + str(mem_for_created_forms_get_form_name(select_form['form_id'])) + ' от пользователя ' + str(mem_for_created_forms_get_creator_id(select_form['form_id'])) + ' /complete_' + str(select_form['form_id']) + '_' + str(form_id)
     
-    if full_message == "Полученные формы:":
+    if "[] от пользователя []" in full_message:
         full_message = 'Нет полученных форм'
 
     await message.answer(full_message)
@@ -33,7 +36,7 @@ async def complete_form(message: types.Message):
 
     completing_forms_dispatcher_add_session(chat_id=message.chat.id, unique_form_id=unique_form_id, unique_sent_form_id=unique_sent_form_id)
 
-    print('completing_forms_dispatcher', completing_forms_dispatcher_get())
+    # print('completing_forms_dispatcher', completing_forms_dispatcher_get())
     await go_cycle(message=message, type='launch_from_message_handler')
 
 
@@ -51,14 +54,14 @@ async def go_cycle(message, type):
         
         user_id = message.chat.id
 
-    print(user_id)
+    # print(user_id)
    
     curr_question_num = completing_forms_dispatcher_get_current_question_num(user_id=user_id)
 
 
     curr_quest = completing_forms_dispatcher_get_question_by_num(user_id=user_id, question_num=curr_question_num)
     
-    print('\n IMPORTONT ', curr_question_num, curr_quest)
+    # print('\n IMPORTONT ', curr_question_num, curr_quest)
     if curr_quest['type'] == 'poll':
 
         msg = await student_bot.send_poll(chat_id=user_id, question=curr_quest['question'], options=curr_quest['options'], is_anonymous=False)
@@ -72,9 +75,9 @@ async def go_cycle(message, type):
 
     elif curr_quest['type'] == 'info':
         sent_form_id = completing_forms_dispatcher_get_sent_form_id(user_id=user_id)
-        send_forms_mem_add_completed_user(sent_form_id=sent_form_id, user_id=user_id)
+        await send_forms_mem_add_completed_user(sent_form_id=sent_form_id, user_id=user_id)
         completing_forms_dispatcher_remove_session(user_id=user_id)
-        print('theend')
+        await student_bot.send_message(chat_id=user_id, text='Форма пройдена, данные отправлены')
         
         sendFormAnswer(temp_mem_for_answers_get())
         # print('\n', temp_mem_for_answers_get())
@@ -96,7 +99,7 @@ def lambda_checker_poll(pollAnswer: types.PollAnswer):
         # print(selected_form)
         # print(selected_form[curr_question_num])
 
-        print(selected_form[curr_question_num], pollAnswer['poll_id'])
+        # print(selected_form[curr_question_num], pollAnswer['poll_id'])
 
         if completing_forms_dispatcher_get_form_question_message_id(user_id=pollAnswer.user.id, question_num=curr_question_num) == pollAnswer['poll_id']:
             question_number = completing_forms_dispatcher_get_current_question_num(user_id=pollAnswer.user.id)
@@ -120,7 +123,7 @@ def lambda_checker_msg(message: types.Message):
 
         curr_question_num = completing_forms_dispatcher_get_current_question_num(user_id=message.chat.id)
         
-        print(completing_forms_dispatcher_get_form_question_message_id(user_id=message.chat.id, question_num=curr_question_num) + 1, message.message_id)
+        # print(completing_forms_dispatcher_get_form_question_message_id(user_id=message.chat.id, question_num=curr_question_num) + 1, message.message_id)
         if completing_forms_dispatcher_get_form_question_message_id(user_id=message.chat.id, question_num=curr_question_num) + 1 == message.message_id:
             
             question_number = completing_forms_dispatcher_get_current_question_num(user_id=message.chat.id)
@@ -140,7 +143,7 @@ def lambda_checker_msg(message: types.Message):
 # handler activates when vote/send answer
 async def poll_handler(pollAnswer: types.PollAnswer):
     """Активируется, когда приходит ответ на опрос/ опрос закрывается"""
-    print('completing_forms_dispatcher ', completing_forms_dispatcher_get())
+    # print('completing_forms_dispatcher ', completing_forms_dispatcher_get())
     # print(pollAnswer)
     if completing_forms_dispatcher_get():
         completing_forms_dispatcher_add_1_to_question_num(user_id=pollAnswer.user.id)
@@ -150,17 +153,35 @@ async def poll_handler(pollAnswer: types.PollAnswer):
 
 async def msg_handlr(message: types.Message):
     """Активируется, когда приходит сообщение"""
-    print('completing_forms_dispatcher', completing_forms_dispatcher_get())
+    # print('completing_forms_dispatcher', completing_forms_dispatcher_get())
     
     if completing_forms_dispatcher_get():
         # print('go ahead msg')
         await go_cycle(message=message, type='launch_from_message_handler')
 
 
+def check_is_already_completed(message: types.Message):
+    form_indexes = message.text[10:].split('_')
+    print('\n\n waargh', form_indexes)
+    # unique_form_id = int(form_indexes[0])
+    unique_sent_form_id = int(form_indexes[1])
+    print(message.chat.id, db_send_forms_mem_get_form_completed_users(sent_form_id=unique_sent_form_id))
+
+    if str(message.chat.id) in db_send_forms_mem_get_form_completed_users(sent_form_id=unique_sent_form_id):
+        return True
+    return False
+
+
+async def already_completed_message_reply(message: types.Message):
+    await message.answer('Вы уже прошли данную форму')
+
+
 def register_handlers_student_status(dp: Dispatcher):
 
     dp.register_message_handler(
         display_user_status, commands="status", state="*")
+    dp.register_message_handler(
+        already_completed_message_reply, lambda message: message.text.startswith('/complete') and check_is_already_completed(message))
     dp.register_message_handler(
         complete_form, lambda message: message.text.startswith('/complete'))
     dp.register_poll_answer_handler(

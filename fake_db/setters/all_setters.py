@@ -1,6 +1,7 @@
 from fake_db.run_to_create_tables import registerData, mem_for_created_forms, send_forms_mem, engine
-from sqlalchemy import update, select
+from sqlalchemy import insert, update, select
 import psycopg2
+from bots import student_bot
 
 
 def db_confirm_user(user_id: int):
@@ -142,25 +143,53 @@ def db_send_forms_mem_add_sent_form(sent_form_id: int, form_id: int, form_creato
         form_data = {'form_id': form_id, 'info': {'form_creator_user_id': form_creator_user_id, 'send_to_users_ids': send_to_users_ids, 'send_to_groups': groups, 'got_answers_from': []}}, 
         got_answers_from = []
     )
+
+    print('\n\n this one ',{'form_id': form_id, 'info': {'form_creator_user_id': form_creator_user_id, 'send_to_users_ids': send_to_users_ids, 'send_to_groups': groups, 'got_answers_from': []}}, )
+
     engine.execute(query)
 
 
-def db_send_forms_mem_add_completed_user(sent_form_id: int, user_id: int):
+async def db_send_forms_mem_add_completed_user(sent_form_id: int, user_id: int):
     """
         Пример send_forms_mem[sent_form_id]['info']:
     {'form_creator_user_id': id,'send_to_users_ids': [айдишники], 'send_to_groups': [groups],'got_answers_from': [айдишники]}
     """
-    
-
-    conn = psycopg2.connect(database="testdb", user="postgres",
-    password="752505", host="localhost", port=5432)
-    cur = conn.cursor()
-    cur.execute("UPDATE send_forms_mem SET got_answers_from = array_append(got_answers_from, '{}') where sent_form_id = {};".format(user_id, sent_form_id))
-    
     query = select([send_forms_mem]).where(
         send_forms_mem.c.sent_form_id == sent_form_id
     )
     result = engine.execute(query).fetchall()
-    send_users = result[0][2]
-    
-    cur.execute("UPDATE send_forms_mem SET got_answers_from = ARRAY [{}] where sent_form_id = {};".format(send_users, sent_form_id))
+
+    if result and user_id in result[0][2]:
+        await student_bot.send_message(chat_id=user_id, text='Вы уже проходили данную форму ранее')
+        return
+
+    conn = psycopg2.connect(database="testdb", user="postgres",
+    password="752505", host="localhost", port=5432)
+    cur = conn.cursor()
+
+    print('\n\nfkof ', "UPDATE send_forms_mem SET got_answers_from = array_append(got_answers_from, '{}') where sent_form_id = {};".format(str(user_id), int(sent_form_id)))
+
+    cur.execute("UPDATE send_forms_mem SET got_answers_from = array_append(got_answers_from, '{}') where sent_form_id = {};".format(str(user_id), int(sent_form_id)))
+    conn.commit()
+
+    query = select([send_forms_mem]).where(
+        send_forms_mem.c.sent_form_id == sent_form_id
+    )
+    result = engine.execute(query).fetchall()
+
+    completed_users = result[0][2]
+    form_copy = result[0][1]
+
+    print('\n\n mate ', form_copy, completed_users)
+    form_copy['info']['got_answers_from'] = completed_users
+
+    query = update(send_forms_mem).where(
+        send_forms_mem.c.sent_form_id == sent_form_id
+    ).values(
+        form_data = form_copy
+    )
+    # result = engine.execute(query).fetchall()
+    engine.execute(query)
+
+    # cur.execute("UPDATE send_forms_mem SET form_data = ARRAY [{}] where sent_form_id = {};".format(send_users, int(sent_form_id)))
+    # conn.commit()
