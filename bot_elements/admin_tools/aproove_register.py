@@ -1,5 +1,4 @@
 from bot_elements.getter.all_getters import registerData_get, edited_register_data_get
-from bot_elements.remover.all_removers import edited_register_data_remove_user, registerData_remove_user
 from bot_elements.setter.all_setters import registerData_accept_register, registerData_deny_register, registerData_accept_register_edit, registerData_deny_register_edit
 from aiogram import types, Dispatcher
 

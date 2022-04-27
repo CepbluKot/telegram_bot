@@ -1,7 +1,6 @@
-from django.dispatch import receiver
 from fake_db.run_to_create_tables import registerData, mem_for_created_forms, send_forms_mem, engine
-from sqlalchemy import update, select
-import psycopg2
+from sqlalchemy import update, select, desc
+from sqlalchemy.sql.expression import func
 
 
 def db_mem_for_created_forms_get():
@@ -306,12 +305,17 @@ def db_unique_sent_form_id_get():
     """ (Для БД) Возвращает счетчик отправленных форм"""
     # print('unique_sent_form_id ',bot_elements.storages.all_storages.unique_sent_form_id)
     # return bot_elements.storages.all_storages.unique_sent_form_id
+    
     query = select([send_forms_mem])
     recieved = engine.execute(query).fetchall()
-    
     if not recieved:
         return 0
-    return (int(recieved[-1][0]) + 1)
+
+    max = 0
+    for a in recieved:
+        if max < a[0]:
+            max = a[0]
+    return max + 1
 
 
 def db_get_all_groups():
@@ -334,3 +338,10 @@ def db_get_document(form_id: int, sent_form_id: int): # Илья сюда
     """ form_id - айдишник формы, sent_form_id - айдишник отправленной формы"""
 
     pass
+
+
+def get_fio_in_group(group: str):
+    """Возвращает список фио людей которые находятся в этой группе"""
+    query = select(registerData)
+    recieved = engine.execute(query).fetchall()
+    

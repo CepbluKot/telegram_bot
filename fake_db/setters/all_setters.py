@@ -1,4 +1,5 @@
-from fake_db.run_to_create_tables import registerData, mem_for_created_forms, send_forms_mem, engine
+import json
+from fake_db.run_to_create_tables import registerData, mem_for_created_forms, send_forms_mem, engine, forms_answers_mem
 from sqlalchemy import insert, update, select
 import psycopg2
 from bots import student_bot
@@ -193,3 +194,14 @@ async def db_send_forms_mem_add_completed_user(sent_form_id: int, user_id: int):
 
     # cur.execute("UPDATE send_forms_mem SET form_data = ARRAY [{}] where sent_form_id = {};".format(send_users, int(sent_form_id)))
     # conn.commit()
+
+
+def db_insert_to_forms_answers_mem(sent_form_id: int, competed_by_user_id: str, form_answers, form_id):
+    query = forms_answers_mem.insert().values(
+        form_id= form_id,
+        sent_form_id = sent_form_id,
+        competed_by_user_id = competed_by_user_id,
+        form_answers = json.dumps( str(form_answers))
+    )
+
+    engine.execute(query)

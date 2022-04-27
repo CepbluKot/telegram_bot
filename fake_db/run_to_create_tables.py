@@ -32,6 +32,14 @@ send_forms_mem = Table('send_forms_mem', metadata,
 )
 
 
+forms_answers_mem = Table('forms_answers_mem', metadata, 
+    Column('form_id', Integer(), nullable=False),
+    Column('sent_form_id', Integer(), nullable=False),
+    Column('competed_by_user_id', Text(), nullable=False),
+    Column('form_answers', JSON(), nullable=False)
+)
+
+
 metadata.create_all(engine)
 
 # engine.execute(operation)

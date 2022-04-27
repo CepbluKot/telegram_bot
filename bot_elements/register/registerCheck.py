@@ -8,8 +8,8 @@ async def checker(message: types.Message):
         
         await message.answer(' Вы не можете ничего делать, пока вы не зарегистрированы')
     else:
-        print('fuu')
         await message.answer(' Вы не можете ничего делать, пока ваша регистарция не подтверждена')
+
 
 def register_handlers_register_check(dp: Dispatcher):
     dp.register_message_handler(

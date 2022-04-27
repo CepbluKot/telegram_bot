@@ -7,8 +7,6 @@ async def get_student_list_pdf(message: types.Message):
     group = message.text[18:].replace('_', '-') # получает ггуппу
     print(translit(group, 'ru'))
     # здесь пропиши путь к сгенерированному файлу
-    
-    await message.answer('lol')
 
 
 def register_handlers_get_data(dp: Dispatcher):

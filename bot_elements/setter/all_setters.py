@@ -17,7 +17,7 @@ from bots import admin_bot, adminIds, student_bot, prepod_bot
 from bot_elements.getter.all_getters import unconfirmed_users_get, registerData_get_role, registerData_check_is_in_register_list, registerData_get_group, registerData_get_fio, registerData_get_role, registerData_check_is_editing, edited_register_data_get_user, unconfirmed_users_get, unconfirmed_edit_users_get, registerData_check_is_confirmed
 from bot_elements.remover.all_removers import edited_register_data_remove_user, registerData_remove_user
 from fake_db.getters.all_getters import db_mem_for_created_forms_get_data
-from fake_db.setters.all_setters import db_confirm_user, db_mem_for_created_forms_add_element, db_mem_for_created_forms_edit_poll_options, db_mem_for_created_forms_insert_question, db_mem_for_created_forms_set_new_form_name, db_mem_for_created_forms_set_new_question_name, db_registerData_add_user, db_registerData_change_data, db_send_forms_mem_add_completed_user, db_send_forms_mem_add_sent_form
+from fake_db.setters.all_setters import db_confirm_user, db_insert_to_forms_answers_mem, db_mem_for_created_forms_add_element, db_mem_for_created_forms_edit_poll_options, db_mem_for_created_forms_insert_question, db_mem_for_created_forms_set_new_form_name, db_mem_for_created_forms_set_new_question_name, db_registerData_add_user, db_registerData_change_data, db_send_forms_mem_add_completed_user, db_send_forms_mem_add_sent_form
 
 def unconfirmed_users_plus_one():
     """ Увеличивает счетчик неподтвержденных пользователей на 1"""
@@ -400,8 +400,16 @@ def sendMsgAnswer(messageAnswer: types.Message, question_number: int, unique_for
 
 def sendFormAnswer(formAnswer: dict):
     """ Сюда приходит словарь со всеми ответами на форму"""
-    print(formAnswer)
-    pass
+    # print(formAnswer)
+    for num in formAnswer:
+        print('\n\n тфеу ршппукы', formAnswer[num][0])
+        sent_form_id= formAnswer[num][0]["unique_sent_form_id"],
+        form_id = formAnswer[num][0]["unique_form_id"],
+        competed_by_user_id= formAnswer[num][0]["messageAnswer"]["chat"]["id"],
+        form_answers= formAnswer[num]
+
+        db_insert_to_forms_answers_mem(form_id=form_id,sent_form_id=sent_form_id, competed_by_user_id=competed_by_user_id, form_answers=form_answers)
+    
 
 # ---- дальше забей ----
 
@@ -422,9 +430,6 @@ def chosen_groups_data_add_group(user_id: int, options_ids: list, groups: list):
         temp_chosen_groups_data[user_id] = []
     
     # print('\n\n',groups, options_ids)
-
-    
-
     selected_groups = itemgetter(*options_ids)(groups)
    
     temp_chosen_groups_data[user_id].extend([selected_groups])
